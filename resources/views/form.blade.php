@@ -12,6 +12,10 @@
   </head>
   <body style="max-width: 900px; margin:auto;">
 
+    @if (session()->has('success-message'))
+      <p style="color:green">{{ session()->get('success-message') }}</p>
+    @endif
+
     @foreach(session()->all() as $key => $value)
       <div class="">
         <h5>{{$key}}</h5>
@@ -22,11 +26,11 @@
 
     <h1>Form</h1>
 
-    <form action="{{ route('session.flash') }}" method="post">
+    <form method="post" action="{{ route('session.flash') }}" >
       <div class="form-group">
         @csrf
         <label for="username">Username</label>
-        <input type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp" placeholder="Enter email">
+        <input name="username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp" placeholder="Enter email">
 
         @error('username')
         <p style="color:red;">{{$message}}</p>
@@ -34,7 +38,7 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
 
         @error('password')
         <p style="color:red;">{{$message}}</p>
@@ -42,6 +46,10 @@
       </div>
 
       <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <form method="post" action={{ route('session.forget') }} >
+      <button type="delete" name="button">ELIMINA</button>
     </form>
 
     <!-- Optional JavaScript -->
