@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +44,16 @@ use Illuminate\Validation\Rule;
 
 // 2 opzione
 
-Route::resource('users', UserController::class);
+// Route::resource('users', UserController::class);
+Route::resource('products', ProductController::class);
+
+Route::name('products.')->prefix('product')->group(function() {
+  Route::get('/', function(Request $request) {
+    return view('products/create');
+  })->name('create');
+});
+
+
 
 
 
