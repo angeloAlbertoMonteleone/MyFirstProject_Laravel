@@ -7,6 +7,11 @@
   </head>
   <body>
 
+
+    <div class="">
+        <p>If you want create a product <a href={{  route('products.create')  }}>Click here!</a> </p>
+    </div>
+
     <table class="table table-dark">
 
       <thead>
@@ -32,6 +37,9 @@
               @else
                 <span style="color:red">Non Disponibile</span>
               @endif
+            </td>
+            <td>
+              <a href={{ route('products.show', ['product' => $product['uuid']]) }}>SEE PRODUCT</a>
             </td>
           </tr>
         @endforeach
