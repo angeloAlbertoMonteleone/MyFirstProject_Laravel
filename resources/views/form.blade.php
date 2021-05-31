@@ -25,10 +25,14 @@
     @endforeach
 
     <h1>Form</h1>
+    <hr>
 
-    <form method="post" action="{{ route('session.flash') }}" >
+    <form method="post" action="{{ route('session.put') }}" >
+      @csrf
+      @method('put')
+
       <div class="form-group">
-        @csrf
+
         <label for="username">Username</label>
         <input name="username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp" placeholder="Enter email">
 
@@ -48,8 +52,15 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    <form method="post" action={{ route('session.forget') }} >
-      <button type="delete" name="button">ELIMINA</button>
+    <br>
+    <h1>Delete your name from the session</h1>
+    <hr>
+    <br>
+    <form class="mb-5" method="post" action={{ route('session.forget') }} >
+      @csrf
+      @method('delete')
+      <input  name="key" value="">
+      <button type="submit" name="button">ELIMINA</button>
     </form>
 
     <!-- Optional JavaScript -->
