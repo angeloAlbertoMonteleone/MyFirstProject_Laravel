@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Products\ProductService;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Validation\ValidationException;
+
 
 class ProductController extends Controller
 {
+
+  use ValidatesRequests;
+
   private $service;
 
     public function __construct() {
@@ -51,28 +56,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-      $validator = Validator::make($request->all(), [
-        'uuid' => 'required',
-        'name' => 'required',
-        'description' => 'required',
-        'price' => 'required',
-        'availability' => 'required'
-      ]);
+      // valid the request
+      $this->validate($request, [
+        'name' => ['required', 'string', 'max:255'],
+        'description' => ['nullable', 'string'],
+        'price' => ['required', 'numeric', 'max:0'],
+        'availability' => ['nullable']
+      ])
 
-      if($request->input('price') !== int){
-          Validation::make($request->all(), [
-            'price' => ['numeric']
-          ])->validate();
-      }
+      // add product into the session
+      $addedProduct = $this->service->addProduct($request->only(['name', 'description', 'price', 'availability']));
 
-      // if the request fails, return an exception
-      if($validator->fails()) {
-        throw new ValidationException($validator);
-      }
-
-      $addProductIntoArray = $this->service->addProduct($request->session()->input('uuid'));
-
-      return responce()->view('products.show', [
+      return responce()->redirectToRoute('products.show', [
         'createdProduct' => $addProductIntoArray
       ]);
     }
@@ -85,7 +80,11 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-      
+      $productsArray = $this->service->products();
+
+      return \response()->view('products.show', [
+        'product' => $id
+      ]);
     }
 
     /**
