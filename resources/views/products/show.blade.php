@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="">
-      {{ json_encode($addProductIntoArray) }}
+      {{ json_encode($product) }}
     </div>
   </body>
 </html>
