@@ -47,11 +47,11 @@ use Illuminate\Validation\Rule;
 // Route::resource('users', UserController::class);
 Route::resource('products', ProductController::class);
 
-Route::name('products.')->prefix('product')->group(function() {
-  Route::get('/', function(Request $request) {
-    return view('products/create');
-  })->name('create');
-});
+// Route::name('products.')->prefix('product')->group(function() {
+//   Route::get('/', function(Request $request) {
+//     return view('products/create');
+//   })->name('create');
+// });
 
 
 
@@ -79,7 +79,7 @@ Route::name('session.')->prefix('session')->group(function() {
 
 
   // sessione flash di una variabile in sessione
-  Route::post('/flash', function(Request $request) {
+  Route::post('/put', function(Request $request) {
     // valido la richiesta
     $validator = Validator::make($request->all(), [
       'username' => 'required',
@@ -92,23 +92,26 @@ Route::name('session.')->prefix('session')->group(function() {
     }
 
     // se la richiesta e` valida, salva i dati in una sessione flash
-    $request->session()->flash(
+    $request->session()->put(
       $request->input('username'),
       $request->input('password')
     );
 
-    // invio un messaggio flash a display, dopo la conferma dell invio di sessione flash
-    $request->session()->flash('success-message', 'Your credentials have been saved correctly!');
+    // invio un messaggio put a display, dopo la conferma dell invio di sessione flash
+    $request->session()->put('success-message', 'Your credentials have been saved correctly!');
 
     // ritornare un redirect alla paggina index
     return redirect()->route('session.index');
-  })->name('flash');
+  })->name('put');
 
 
 
   // sessione forget
   Route::delete('/forget', function(Request $request) {
-    $request->session()->forget('username', 'password');
+    $request->session()->forget($request->input('key'));
+
+    // invio un messaggio delete a display, dopo la conferma dell invio di sessione forget
+    $request->session()->put('success-message', 'Your credentials have been deleted correctly!');
 
     return redirect()->route('session.index');
   })->name('forget');
