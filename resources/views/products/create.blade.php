@@ -13,35 +13,48 @@
 
     {{-- method="get" action="{{ route('products.store') }} --}}
     <form method="get" action="{{ route('products.store') }}">
-      <div class="form-group">
+      @csrf
+
+      {{-- <div class="form-group">
         <label for="exampleFormControlInput1">UUID</label>
         <input name="uuid" class="form-control" id="exampleFormControlInput1" placeholder="enter the product uuid">
-      </div>
+      </div> --}}
 
       <div class="form-group">
         <label for="exampleFormControlInput1">Name</label>
-        <input name="name" class="form-control" id="exampleFormControlInput1" placeholder="enter the product name">
+        <input name="name" value={{ old('name') }} class="form-control" id="exampleFormControlInput1" placeholder="enter the product name">
       </div>
+
+      @error ('name')
+          <p style="color:red">{{ $message }}</p>
+      @enderror
 
       <div class="form-group">
         <label for="exampleFormControlTextarea1">Description</label>
-        <textarea name="description" class="form-control" id="exampleFormControlTextarea1" placeholder="enter the product description"></textarea>
+        <textarea name="description" value={{ old('description') }} class="form-control" id="exampleFormControlTextarea1" placeholder="enter the product description"></textarea>
       </div>
+
+      @error ('description')
+          <p style="color:red">{{ $message }}</p>
+      @enderror
 
       <div class="form-group">
         <label for="exampleFormControlTextarea1">Price</label>
-        <input name="price" class="form-control" id="exampleFormControlTextarea1" placeholder="enter the product price"></input>
+        <input name="price" value={{ old('price') }} class="form-control" type="number" step="0.01" min="0" id="exampleFormControlTextarea1" placeholder="enter the product price"></input>
       </div>
 
+      @error ('price')
+          <p style="color:red">{{ $message }}</p>
+      @enderror
 
       <div class="form-group">
         <label for="exampleFormControlSelect1">Availability</label>
-        <select name="availability" class="form-control" id="exampleFormControlSelect1">
-          <option value=false selected>0</option>
-          <option value=true>1</option>
-        </select>
+        <input type="checkbox" name="available" value="1"{{ old('available', false) ? 'checked' : ''}}>
       </div>
 
+      @error ('available')
+          <p style="color:red">{{ $message }}</p>
+      @enderror
 
       <button class="btn btn-primary" type="submit" name="button">SEND</button>
 
