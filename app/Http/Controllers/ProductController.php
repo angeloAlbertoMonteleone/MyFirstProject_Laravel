@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Products\ProductService;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Foundation\Validation\ValidationException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 
 class ProductController extends Controller
@@ -13,10 +12,10 @@ class ProductController extends Controller
 
   use ValidatesRequests;
 
-  private $service;
+  private  $service;
 
-    public function __construct() {
-      $this->service = new ProductService();
+    public function __construct(ProductService $service) {
+      $this->service = $service;
     }
 
 
@@ -27,10 +26,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $productsArray = $this->service->products();
+        $products = $this->service->products();
 
         return \response()->view('products.index', [
-          'products' => $productsArray
+          'products' => $products
         ]);
     }
 
@@ -41,10 +40,12 @@ class ProductController extends Controller
      */
     public function create()
     {
-      $productsArray = $this->service->products();
+      session()->all()->flush();
+
+      $products = $this->service->products();
 
       return \response()->view('products.create', [
-        'products' => $productsArray
+        'products' => $products
       ]);
     }
 
@@ -60,16 +61,15 @@ class ProductController extends Controller
       $this->validate($request, [
         'name' => ['required', 'string', 'max:255'],
         'description' => ['nullable', 'string'],
-        'price' => ['required', 'numeric', 'max:0'],
-        'availability' => ['nullable']
-      ])
+        'price' => ['required', 'numeric', 'min:0'],
+        'available' => ['required']
+      ]);
 
       // add product into the session
-      $addedProduct = $this->service->addProduct($request->only(['name', 'description', 'price', 'availability']));
+      $product = $this->service->addProduct($request->only(['name', 'description', 'price', 'available']));
 
-      return responce()->redirectToRoute('products.show', [
-        'createdProduct' => $addProductIntoArray
-      ]);
+      // redirect to the route show
+      return \response()->redirectToRoute('products.show', ['product' => $product['uuid']]);
     }
 
     /**
@@ -80,10 +80,15 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-      $productsArray = $this->service->products();
+
+      $product = $this->service->product($id);
+
+      if($product === null) {
+        return 'The product doesn`t exist';
+      }
 
       return \response()->view('products.show', [
-        'product' => $id
+        'product' => $product
       ]);
     }
 
