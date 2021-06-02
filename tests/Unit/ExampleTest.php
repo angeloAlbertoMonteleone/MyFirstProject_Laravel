@@ -15,4 +15,13 @@ class ExampleTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /** @test */
+    public function serviceReturnsDefaultValue() {
+      $productService = new ProductService();
+
+      $result = $productService->product('foo');
+
+      $this->assertNull($result);
+    }
 }
