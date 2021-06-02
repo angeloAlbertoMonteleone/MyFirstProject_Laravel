@@ -8,10 +8,6 @@
   <body>
 
 
-    <div class="">
-        <p>If you want create a product <a href={{  route('products.create')  }}>Click here!</a> </p>
-    </div>
-
     <table class="table table-dark">
 
       <thead>
@@ -31,15 +27,17 @@
             <td>{{ $product['name'] }}</td>
             <td>{{ $product['description'] }}</td>
             <td>{{ $product['price'] }}</td>
-            <td>
-              @if ($product['available'])
+            {{-- <td>
+              @if ()
                 <span style="color:green">Disponibile</span>
               @else
                 <span style="color:red">Non Disponibile</span>
               @endif
-            </td>
+            </td> --}}
+
             <td>
-              <a href={{ route('products.show', ['product' => $product['uuid']]) }}>SEE PRODUCT</a>
+              <a class="btn btn-primary btn-sm" href={{ route('products.show', ['product' => $product['uuid']]) }}>SEE PRODUCT</a><br>
+              <a class="btn btn-danger btn-sm" href={{ route('products.show', ['product' => $product['uuid']]) }}>DELETE PRODUCT</a>
             </td>
           </tr>
         @endforeach
@@ -47,9 +45,10 @@
 
     </table>
 
-    <form class="" action={{ route('products.create') }} method="get">
-      <button class="btn-success mt-2 p-3" type="submit" name="button">Create a new product</button>
-    </form>
+    <div class="">
+        <p>If you want create a product <a href={{  route('products.create')  }} class="btn-success mt-2 p-3">Click here!</a> </p>
+    </div>
+
 
   </body>
 </html>
