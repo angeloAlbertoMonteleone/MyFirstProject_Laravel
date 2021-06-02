@@ -3,6 +3,7 @@
 namespace App\Products;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class ProductService
 {
@@ -56,7 +57,9 @@ class ProductService
 
     public static function product(string $uuid): ?array
     {
-        return session()->get('products.'.$uuid);
+      return Arr::first(session()->get('products', []), function ($item) use ($uuid) {
+          return $item['uuid'] == $uuid;
+        });
     }
 
     public static function addProduct(array $data)
@@ -66,15 +69,21 @@ class ProductService
         }
 
         session()->push('products', $data);
+
+        return $data;
     }
 
     public static function updateProduct(string $uuid, array $data)
     {
         session()->put('products.'.$uuid, $data);
+
+        return $data;
     }
 
     public static function deleteProduct(string $uuid)
     {
         session()->forget('products.'.$uuid);
+
+        return $data;
     }
 }
