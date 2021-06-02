@@ -11,18 +11,13 @@
     <p>{{ json_encode($products) }}</p>
 
 
-    {{-- method="get" action="{{ route('products.store') }} --}}
-    <form method="get" action="{{ route('products.store') }}">
-      @csrf
 
-      {{-- <div class="form-group">
-        <label for="exampleFormControlInput1">UUID</label>
-        <input name="uuid" class="form-control" id="exampleFormControlInput1" placeholder="enter the product uuid">
-      </div> --}}
+    <form method="post" action="{{ route('products.store') }}">
+      @csrf
 
       <div class="form-group">
         <label for="exampleFormControlInput1">Name</label>
-        <input name="name" value={{ old('name') }} class="form-control" id="exampleFormControlInput1" placeholder="enter the product name">
+        <input name="name" value="{{ old('name') }}" class="form-control" id="exampleFormControlInput1" placeholder="enter the product name">
       </div>
 
       @error ('name')
@@ -31,7 +26,7 @@
 
       <div class="form-group">
         <label for="exampleFormControlTextarea1">Description</label>
-        <textarea name="description" value={{ old('description') }} class="form-control" id="exampleFormControlTextarea1" placeholder="enter the product description"></textarea>
+        <textarea name="description"  class="form-control" id="exampleFormControlTextarea1" placeholder="enter the product description">{{ old('description') }}</textarea>
       </div>
 
       @error ('description')
@@ -40,7 +35,7 @@
 
       <div class="form-group">
         <label for="exampleFormControlTextarea1">Price</label>
-        <input name="price" value={{ old('price') }} class="form-control" type="number" step="0.01" min="0" id="exampleFormControlTextarea1" placeholder="enter the product price"></input>
+        <input name="price" value="{{ old('price') }}" class="form-control" type="number" step="0.01" min="0" id="exampleFormControlTextarea1" placeholder="enter the product price"></input>
       </div>
 
       @error ('price')
@@ -49,7 +44,7 @@
 
       <div class="form-group">
         <label for="exampleFormControlSelect1">Availability</label>
-        <input type="checkbox" name="available" value="1"{{ old('available', false) ? 'checked' : ''}}>
+        <input type="checkbox" name="available" value="1"{{ old('available', false) ? ' checked' : '' }}>
       </div>
 
       @error ('available')
