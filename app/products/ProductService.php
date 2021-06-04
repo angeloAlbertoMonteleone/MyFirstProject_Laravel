@@ -75,7 +75,7 @@ class ProductService
 
     public static function updateProduct(string $uuid, array $data)
     {
-        session()->put('products.'.$uuid, $data);
+        session()->put('products.'.$uuid, \array_merge($data, ['uuid' => $uuid]));
 
         return $data;
     }
