@@ -98,9 +98,14 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($uuid)
     {
-        //
+        $product = $this->service->product($uuid);
+        if($product === null) {
+          abort(404, "The selected product doesn`t exist");
+        }
+
+        return \response()->view('products.edit', ['product' => $product]);
     }
 
     /**
@@ -112,7 +117,27 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      //valid the request
+      $this->validate($request, [
+        'name' => ['required', 'string', 'max:255'],
+        'description' => ['nullable', 'string'],
+        'price' => ['required', 'numeric', 'min:0'],
+        'available' => ['required']
+      ]);
+
+      // check if the product exists
+      $product = $this->service->product($uuid);
+      if($product === null) {
+        abort(404, "The selected product doesn`t exist");
+      }
+
+      // add product into the session
+      $data = $this->service->addProduct($request->only(['name', 'description', 'price', 'available']));
+
+      $productInDb = $this->service->updateProduct($product['uuid'], $data);
+
+      // redirect to the route show
+      return \response()->view('products.show', ['product' => $product['uuid']]);
     }
 
     /**
