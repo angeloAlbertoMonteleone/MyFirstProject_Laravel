@@ -39,10 +39,14 @@
       @endif
     </div>
 
+<br>
     <div class="">
-      <p>If you wanna go back to the main page, <a class="btn btn-success mt-4" href={{ route('products.index') }}>Click here!</a></p>
+        <a class="btn btn-primary mt-4" href="{{ route('products.edit', ['product' => $product['uuid']]) }}">Modify Product</a>
     </div>
 
+    <div class="">
+      <p>If you wanna go back to the main page, <a class="btn btn-danger mt-4 btn-xs" href={{ route('products.index') }}>Click here!</a></p>
+    </div>
     </div>
   </body>
 </html>
