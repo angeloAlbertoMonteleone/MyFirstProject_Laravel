@@ -7,6 +7,17 @@
   </head>
   <body>
 
+    <div class="">
+      @if(!session()->has('cart') || session()->get('cart', collect())->isEmpty())
+        <h2>The cart is empty</h2>
+      @else
+        <p>Your Cart contains {{ session()->get('cart')->sum('quantity') }} products </p>
+      @endif
+
+      @if (session()->has('message'))
+        <p style="color:green">{{ session()->get('message') }}</p>
+      @endif
+    </div>
 
     <table class="table table-dark">
 
@@ -37,7 +48,19 @@
 
             <td>
               <a class="btn btn-primary btn-sm" href={{ route('products.show', ['product' => $product['uuid']]) }}>SEE PRODUCT</a><br>
-              <a class="btn btn-danger btn-sm" href={{ route('products.show', ['product' => $product['uuid']]) }}>DELETE PRODUCT</a>
+
+              <form method="post" id="{{ $product['uuid']. '-delete' }}" action="{{ route('products.destroy', ['product' => $product['uuid']]) }}" >
+                @method('delete')
+                @csrf
+
+                <a class="btn btn-danger btn-sm" href="#" onclick="document.getElementById('{{$product['uuid'].'-delete'}}').submit()">DELETE PRODUCT</a>
+              </form>
+
+              <form method="post" id="{{ $product['uuid']. '-cart' }}" action="{{ route('cart.addToCart', ['product' => $product['uuid']]) }}" >
+                @csrf
+                <input type="hidden" name="product" value="{{ $product['uuid'] }}">
+                <a class="btn btn-primary btn-sm" href="#" onclick="document.getElementById('{{$product['uuid'].'-cart'}}').submit()">ADD PRODUCT</a>
+              </form>
             </td>
           </tr>
         @endforeach
