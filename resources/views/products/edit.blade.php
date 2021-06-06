@@ -9,7 +9,7 @@
     <h1>Creation Form</h1>
 
 
-    <form method="post" action="{{ route('products.store') }}">
+    <form method="post" action="{{ route('products.update', ['product' => $product['uuid']]) }}">
       @csrf
       @method('PUT')
 
