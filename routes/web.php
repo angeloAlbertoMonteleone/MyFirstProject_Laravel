@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,39 +20,42 @@ use Illuminate\Validation\Rule;
 |
 */
 
-// Implementare le mie route su UserController
-// 1 opzione
 
-// Route::name('users.')->prefix('users')->group(function () {
-//   // rotta per recuperare lista utenti
-//   Route::get('/', [UserController::class, 'index']);
-//   // rotta per visualizzare il form di creazione
-//   Route::get('/create', [UserController::class, 'create']);
-//   // rotta per salvare un nuovo utente
-//   Route::post('/', [UserController::class], 'store');
-//   // rotta per visualizzare un utente
-//   Route::get('/{id}', [UserController::class], 'show');
-//   // rotta per visualizzare il form di mofica
-//   Route::get('/{id}/edit', [UserController::class], 'edit');
-//   // rotta per modificare un utente
-//   Route::patch('/{id}', [UserController::class], 'update');
-//   // rotta per eliminare un utente
-//   Route::delete('/{id}', [UserController::class], 'destroy');
-// });
+
+
+/*Rotte Carrello*/
+Route::name('cart.')->prefix('cart')->group(function() {
+  // rotta di indice del carrello
+  Route::get('/', [CartController::class, 'index'])->name('index');
+
+  // rotta per aggiungere un elemento con quantita' differenti al carrello
+  Route::post('/', [CartController::class, 'addToCart'])->name('addToCart');
+
+  // rotta per modificare la quantita' di un certo elemento
+  // se la quantita e` zero, il prodotto verra' eliminato
+  Route::patch('/{product}/quantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
+
+  //rotta per eliminare l'elemento dal carrello
+  Route::delete('/{product}', [CartController::class, 'destroy'])->name('destroy');
+
+});
+
+
+
+
+
 
 
 
 
 // 2 opzione
 
+// rotta del progetto Products
 // Route::resource('users', UserController::class);
 Route::resource('products', ProductController::class);
 
-// Route::name('products.')->prefix('product')->group(function() {
-//   Route::get('/', function(Request $request) {
-//     return view('products/create');
-//   })->name('create');
-// });
+
+
 
 
 
@@ -204,3 +208,30 @@ Route::name('session.')->prefix('session')->group(function() {
 //   // ritornare un redirect alla paggina index
 //   return redirect()->route('session.index');
 // })->name('put');
+
+
+
+
+
+
+
+
+// Implementare le mie route su UserController
+// 1 opzione
+
+// Route::name('users.')->prefix('users')->group(function () {
+//   // rotta per recuperare lista utenti
+//   Route::get('/', [UserController::class, 'index']);
+//   // rotta per visualizzare il form di creazione
+//   Route::get('/create', [UserController::class, 'create']);
+//   // rotta per salvare un nuovo utente
+//   Route::post('/', [UserController::class], 'store');
+//   // rotta per visualizzare un utente
+//   Route::get('/{id}', [UserController::class], 'show');
+//   // rotta per visualizzare il form di mofica
+//   Route::get('/{id}/edit', [UserController::class], 'edit');
+//   // rotta per modificare un utente
+//   Route::patch('/{id}', [UserController::class], 'update');
+//   // rotta per eliminare un utente
+//   Route::delete('/{id}', [UserController::class], 'destroy');
+// });
