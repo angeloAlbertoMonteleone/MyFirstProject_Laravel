@@ -8,7 +8,7 @@
   <body style="max-width: 1000px; margin: auto">
     <h1>Creation Form</h1>
 
-    <p>{{ json_encode($products) }}</p>
+    {{-- <p>{{ json_encode($products) }}</p> --}}
 
 
 
