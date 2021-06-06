@@ -8,7 +8,7 @@
   </head>
   <body style="max-width: 1000px; margin: auto;">
     <div class="">
-      {{ json_encode($product) }}
+      {{-- {{ json_encode($product) }} --}}
 
     <div class="mt-5">
       <strong>#</strong>
