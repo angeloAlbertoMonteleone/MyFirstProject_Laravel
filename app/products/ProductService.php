@@ -50,19 +50,19 @@ class ProductService
         }
     }
 
-    public static function products(): array
+    public function products(): array
     {
         return session()->get('products');
     }
 
-    public static function product(string $uuid): ?array
+    public function product(string $uuid): ?array
     {
       return Arr::first(session()->get('products', []), function ($item) use ($uuid) {
           return $item['uuid'] == $uuid;
         });
     }
 
-    public static function addProduct(array $data)
+    public function addProduct(array $data)
     {
         if(!array_key_exists('uuid', $data)) {
             $data['uuid'] = Str::uuid();
@@ -73,17 +73,36 @@ class ProductService
         return $data;
     }
 
-    public static function updateProduct(string $uuid, array $data)
+    public function updateProduct(string $uuid, array $data)
     {
-        session()->put('products.'.$uuid, \array_merge($data, ['uuid' => $uuid]));
+        static::deleteProduct($uuid);
+
+        $data = array_merge($data, ['uuid' => $uuid]);
+
+        session()->push('products', $data);
 
         return $data;
     }
 
-    public static function deleteProduct(string $uuid)
+    public function deleteProduct(string $uuid)
     {
-        session()->forget('products.'.$uuid);
+      $collect = collect(session()->get('products'))->filter(function($item) use ($uuid) {
+        return $item['uuid'] != $uuid;
+      });
 
-        return $data;
+      session()->put('products', $collect->toArray());
+
+      return $uuid;
     }
+
+
+    public function findOrFail(string $uuid)
+  {
+      $product = $this->product($uuid);
+      if($product === null) {
+          abort(404, 'Il prodotto selezionato NON ESISTE!');
+      }
+
+      return $product;
+  }
 }
