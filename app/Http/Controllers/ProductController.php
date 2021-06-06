@@ -33,6 +33,10 @@ class ProductController extends Controller
         ]);
     }
 
+
+
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -40,14 +44,15 @@ class ProductController extends Controller
      */
     public function create()
     {
-      session()->all()->flush();
 
-      $products = $this->service->products();
-
-      return \response()->view('products.create', [
-        'products' => $products
-      ]);
+      return \response()->view('products.create');
     }
+
+
+
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -58,19 +63,22 @@ class ProductController extends Controller
     public function store(Request $request)
     {
       // valid the request
-      $this->validate($request, [
-        'name' => ['required', 'string', 'max:255'],
-        'description' => ['nullable', 'string'],
-        'price' => ['required', 'numeric', 'min:0'],
-        'available' => ['required']
-      ]);
+      $this->validateRequest($request);
 
+      $this->validateRequest($request);
       // add product into the session
-      $product = $this->service->addProduct($request->only(['name', 'description', 'price', 'available']));
+      $product = $this->service->addProduct($this->formattedDataFrom($request));
+
+      // flash message to confirm the storage
+      $request->session()->flash('message', sprintf('the product %s has been added', $product['name']));
 
       // redirect to the route show
-      return \response()->redirectToRoute('products.show', ['product' => $product['uuid']]);
+      return redirect()->route('products.index');
     }
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -78,19 +86,20 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($uuid)
     {
 
-      $product = $this->service->product($id);
-
-      if($product === null) {
-        return 'The product doesn`t exist';
-      }
+      $product = $this->service->findOrFail($uuid);
 
       return \response()->view('products.show', [
         'product' => $product
       ]);
     }
+
+
+
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -100,13 +109,14 @@ class ProductController extends Controller
      */
     public function edit($uuid)
     {
-        $product = $this->service->product($uuid);
-        if($product === null) {
-          abort(404, "The selected product doesn`t exist");
-        }
+        $product = $this->service->findOrFail($uuid);
 
         return \response()->view('products.edit', ['product' => $product]);
     }
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -115,30 +125,29 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $uuid)
     {
       //valid the request
-      $this->validate($request, [
-        'name' => ['required', 'string', 'max:255'],
-        'description' => ['nullable', 'string'],
-        'price' => ['required', 'numeric', 'min:0'],
-        'available' => ['required']
-      ]);
+      $this->validateRequest($request);
 
       // check if the product exists
-      $product = $this->service->product($uuid);
-      if($product === null) {
-        abort(404, "The selected product doesn`t exist");
-      }
+      $product = $this->service->findOrFail($uuid);
+
+      $data = $this->formattedDataFrom($request);
 
       // add product into the session
-      $data = $this->service->addProduct($request->only(['name', 'description', 'price', 'available']));
+      $product = $this->service->updateProduct($product['uuid'], $data);
 
-      $productInDb = $this->service->updateProduct($product['uuid'], $data);
+      // flash message to confirm the storage
+      $request->session()->flash('message', sprintf('the product %s has been updated', $product['name']));
+
 
       // redirect to the route show
-      return \response()->view('products.show', ['product' => $product['uuid']]);
+      return redirect()->route('products.index');
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -146,8 +155,38 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($uuid)
     {
-        //
+      // check if the product exists
+      $product = $this->service->findOrFail($uuid);
+
+      // delete product
+      $this->service->deleteProduct($product['uuid']);
+
+      // flash message to confirm the storage
+      session()->flash('message', sprintf('the product %s has been cancelled', $product['name']));
+
+      // redirect to the route show
+      return redirect()->route('products.index');
     }
+
+
+
+
+
+    private function validateRequest(Request $request) {
+
+      $this->validate($request, [
+        'name' => ['required', 'string', 'max:255'],
+        'description' => ['nullable', 'string'],
+        'price' => ['required', 'numeric', 'min:0'],
+        'available' => ['required']
+      ]);
+    }
+
+    private function formattedDataFrom(Request $request): array
+ {
+     return $request->only(['name', 'description', 'price', 'available']);
+ }
+
 }
